@@ -40,6 +40,12 @@ class SourceUnit {
     return { filePath, content };
   }
 
+  helloWorld() {
+    console.log('from source unit: hello world');
+    console.log('seeing this: ', this);
+    return 'from source unit: howdyhowdy!';
+  }
+
   toJSON() {
     return this.ast;
   }
@@ -120,7 +126,8 @@ class Contract {
   }
 
   helloWorld() {
-    console.log('hello world');
+    console.log('from contract: hello world');
+    return 'from contract: howdyhowdy!';
   }
 
   toJSON() {
@@ -128,6 +135,7 @@ class Contract {
   }
 
   getSource() {
+    console.log('got to getSource');
     return this.sourceUnit.content
       .split('\n')
       .slice(this.ast.loc.start.line - 1, this.ast.loc.end.line)
@@ -242,10 +250,125 @@ class FunctionDef {
   }
 
   getSource() {
-    return this.contract.sourceUnit.content
+    console.log('got to getSource');
+    let modifier_code = this.getModifiersSource();
+    console.log('seeing modifier code: ', modifier_code);
+
+    console.log(
+      'seeing source lines: ',
+      this.ast.loc.start.line,
+      this.ast.loc.end.line
+    );
+    console.log(
+      'seeing contract source unit content: ',
+      this.contract.sourceUnit.content
+    );
+
+    let function_code = this.contract.sourceUnit.content
       .split('\n')
       .slice(this.ast.loc.start.line - 1, this.ast.loc.end.line)
       .join('\n');
+    return modifier_code + '\n' + function_code;
+  }
+
+  getAllModsSource() {
+    /* modifiers obj looks like:
+    modifiers: {
+      onlyFromMember: [FunctionDef],
+      onlyFromForeperson: [FunctionDef],
+      onlyFromFeeAddress: [FunctionDef],
+      roscaNotEnded: [FunctionDef],
+      roscaEnded: [FunctionDef],
+      onlyIfEscapeHatchActive: [FunctionDef],
+      onlyIfEscapeHatchInactive: [FunctionDef],
+      onlyFromEscapeHatchEnabler: [FunctionDef]
+    },
+    */
+
+    let allMods = {};
+    for (let modName in this.contract.modifiers) {
+      let mod = this.contract.modifiers[modName];
+      allMods[modName] = mod;
+    }
+    // console.log('helloworld??');
+    // console.log('allMods', allMods);
+    // try getting the source code as well and printing it:
+    let allModsSource = [];
+    for (let modName in allMods) {
+      let mod = allMods[modName];
+      let modSource = mod.getSource();
+      // console.log('got source for mod', modSource);
+      allModsSource.push(mod.source);
+    }
+
+    return allModsSource;
+  }
+
+  helloWorld() {
+    console.log('from function: hello world');
+    console.log('seeing this: ', this);
+
+    console.log('sees modifiers: ', this.modifiers);
+    // console.log('sees modifiers source: ', this.getModifiersSource());
+    console.log('sees start line: ', this.ast.loc.start.line);
+    console.log('sees end line: ', this.ast.loc.end.line);
+    console.log(
+      'sees contract source unit content: ',
+      this.contract.sourceUnit.content
+    );
+
+    console.log('sees contract name: ', this.contract.name);
+    console.log('sees dependencies: ', this.contract.dependencies);
+
+    console.log('sees ast modifiers: ', this.ast.modifiers);
+    console.log(
+      'sees loc for function-based modifier: ',
+      this.modifiers['onlyWallet'].loc
+    );
+
+    console.log('sees contract sourceunit ast: ', this.contract.sourceUnit.ast);
+    console.log(
+      'sees multisigwallet pathliteral:',
+      this.contract.sourceUnit.ast.children[3].pathLiteral
+    );
+    console.log(
+      'sees multisigwallet symbolaliases:',
+      this.contract.sourceUnit.ast.children[3].symbolAliases
+    );
+    console.log(
+      'and multisigwallet symbolaliasidentifiers:',
+      this.contract.sourceUnit.ast.children[3].symbolAliasIdentifiers
+    );
+    console.log(
+      'and multisigwallet loc:',
+      this.contract.sourceUnit.ast.children[3].loc
+    );
+
+    console.log('sees source: ', this.getSource());
+    return 'from function: howdyhowdy!';
+  }
+
+  getModifiers() {
+    // console.log('modifiers is:', this.modifiers);
+    return this.modifiers;
+  }
+
+  getModifiersSource() {
+    // note: the modifier source may not be in this contract, it may instead be inside a dependency (inside this.contract.dependencies)
+    let function_modifiers = this.getModifiers();
+    let contract_modifiers = this.contract.modifiers;
+
+    let modifiersSource = [];
+    for (let modifierName in function_modifiers) {
+      // get the modifier object corresponding to this name from the contract_modifiers, then getSource
+      let c_modifier = contract_modifiers[modifierName];
+      // console.log('modifier is:', c_modifier);
+
+      let modifierSource = c_modifier.getSource();
+      // console.log('modifier source is:', modifierSource);
+      modifiersSource.push(modifierSource);
+    }
+    return modifiersSource;
   }
 
   callsTo(funcName) {
