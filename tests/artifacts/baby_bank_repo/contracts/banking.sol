@@ -7,7 +7,6 @@ contract banking is baby_bank {
     mapping (address => uint256) public trackermeter;
 
     constructor() payable {
-
         super();
     }
     function withdraw() public {

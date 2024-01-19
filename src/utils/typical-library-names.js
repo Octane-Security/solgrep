@@ -12,6 +12,9 @@ const typicalLibraryNames = [
     'FixedPoint',
     'node_modules',
     '@openzeppelin',
-];
+]
 
-module.exports = {typicalLibraryNames};
+
+module.exports = {
+    typicalLibraryNames
+}
