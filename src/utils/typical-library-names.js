@@ -1,6 +1,6 @@
 // All typical library names in solidity
 
-export const typicalLibraryNames = [
+const typicalLibraryNames = [
     'openzeppelin-contracts',
     'openzeppelin-solidity',
     'openzeppelin',
@@ -12,5 +12,6 @@ export const typicalLibraryNames = [
     'FixedPoint',
     'node_modules',
     '@openzeppelin',
-]
-    
+];
+
+module.exports = {typicalLibraryNames};

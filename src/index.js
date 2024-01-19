@@ -11,7 +11,6 @@ const { BaseRule, Stats, GenericGrep } = rules;
 module.exports = {
     SolGrep,
     rules,
-    solidity,
     SourceUnit,
     Contract,
     FunctionDef,
