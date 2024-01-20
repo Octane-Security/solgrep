@@ -52,17 +52,8 @@ const argv = require('yargs') // eslint-disable-line
   .alias('v', 'version').argv;
 
 var selectedModules = [];
-const banner = `🧠 ${chalk.bold('SolGrep')} v${
-  require('../package.json').version
-} ready!
-`;
-const byebyeBanner = `
-
-cheers 🙌 
-    ${chalk.bold('@tintinweb')} 
-    ConsenSys Diligence @ https://consensys.net/diligence/
-    https://github.com/tintinweb/solgrep/ 
-`;
+const banner = `what's up punk? 🤘`;
+const byebyeBanner = `👋 byebye`;
 
 function exitProcess(status) {
   console.log(byebyeBanner);
@@ -90,7 +81,7 @@ function main() {
   }
 
   if (argv.find.length) {
-    /*  bug: argv parser takes everything after --find as grep pattern instead of potential paths.
+    /*  bug: argv parser takes everything after --find as grep pattern instead of potential paths. 
             fix:  check if pattern is a path and add it to argv instead
         */
     let paths = argv.find.filter((a) => fs.existsSync(a));
